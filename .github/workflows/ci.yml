@@ -241,13 +241,7 @@ jobs:
 
   publish-artifacts:
     runs-on: ubuntu-22.04
-    needs:
-      - detect-noop
-      - report-breaking-changes
-      - lint
-      - check-diff
-      - unit-tests
-      - local-deploy
+    needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
 
     steps:
@@ -316,6 +310,11 @@ jobs:
         with:
           name: output
           path: _output/**
+      - name: Upbound login
+        run: make upbound-login
+        env:
+          UP_USER: ${{ secrets.UP_USER }}
+          UP_PASSWORD: ${{ secrets.UP_PASSWORD }}
 
       - name: Publish Artifacts
         run: make publish BRANCH_NAME=${GITHUB_REF##*/}
