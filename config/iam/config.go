@@ -64,6 +64,16 @@ func Configure(p *ujconfig.Provider) {
 		r.References["target_name"] = ujconfig.Reference{
 			Type: "User",
 		}
+		r.Sensitive.AdditionalConnectionDetailsFn = func(attr map[string]any) (map[string][]byte, error) {
+			conn := map[string][]byte{}
+			if a, ok := attr["access_key"].(string); ok {
+				conn["access_key"] = []byte(a)
+			}
+			if a, ok := attr["secret_key"].(string); ok {
+				conn["secret_key"] = []byte(a)
+			}
+			return conn, nil
+		}
 	})
 	p.AddResourceConfigurator("minio_iam_user", func(r *ujconfig.Resource) {
 		r.ShortGroup = Group
